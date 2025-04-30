@@ -13,7 +13,7 @@ import { AdminStore, HttpTypes, StoreCustomer } from "@medusajs/types"
 import ChatWidget from "ChatWidget"
 
 export interface StoreProduct extends HttpTypes.StoreProduct {
-  store: AdminStore;
+  store: AdminStore
 }
 
 type ProductTemplateProps = {
@@ -69,7 +69,13 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <RelatedProducts product={product} countryCode={countryCode} />
         </Suspense>
       </div>
-      <ChatWidget store={product.store} customer={customer} />
+      <ChatWidget
+        productName={product.title}
+        productId={product.id}
+        store={product.store}
+        customer={customer}
+        chatPerProduct={true}
+      />
     </>
   )
 }

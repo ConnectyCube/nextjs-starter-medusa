@@ -1,46 +1,92 @@
-'use client';
+"use client"
 
-import ConnectyCubeChatWidget from '@connectycube/chat-widget/react19';
-import { AdminStore, StoreCustomer } from '@medusajs/types';
+import React, { useEffect, useState } from "react"
+import ConnectyCubeChatWidget from "@connectycube/chat-widget/react19"
+import { AdminStore, StoreCustomer } from "@medusajs/types"
 
 export interface ChatWidgetProps {
-    store: AdminStore;
-    customer: StoreCustomer | null;
+  productId: string
+  productName: string
+  store: AdminStore
+  customer: StoreCustomer | null
+  chatPerProduct?: boolean
 }
 
-export default function ChatWidget({store, customer}: ChatWidgetProps) {
-    const quickActions = {
-        title: 'Quick Actions',
-        description: 'Select an action from the options below or type a first message to start a conversation.',
-        actions: [
-          'Hello there!',
-          'How are you doing today?',
-          'What features of the ConnectyCube SDK do you find most useful and how have they improved your development process?',
-          'Goodbye and take care!',
-        ],
-    };
+export default function ChatWidget({
+  store,
+  customer,
+  productId,
+  productName,
+  chatPerProduct,
+}: ChatWidgetProps) {
+  const quickActions = {
+    title: "Quick Actions",
+    description:
+      "Select an action from the options below or type a first message to start a conversation.",
+    actions: [
+      "Hi, I'm interested in this product.",
+      "Can you tell me more about the price and payment options?",
+      "Is the product still available?",
+      "Can I schedule a viewing?",
+    ],
+  }
 
-    if (!customer) {
-        return null;
+  if (!customer) {
+    return null
+  }
+
+  const [defaultChat, setDefaultChat] = useState<any>(null)
+  const [isOpen, setIsOpen] = useState<any>(false)
+
+  const onOpenCloseWidget = (isOpen: boolean) => {
+    setIsOpen(isOpen)
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      console.log("Widget is open:", isOpen)
+      const defaultChatKey = chatPerProduct ? productId : store.id
+      const defaultChatName = chatPerProduct ? productName : store.name
+
+      setDefaultChat({
+        id: defaultChatKey,
+        opponentUserId: store.id,
+        type: "group",
+        name: defaultChatName,
+      })
     }
+  }, [isOpen])
 
   return (
     <div>
-        <ConnectyCubeChatWidget
-          appId={process.env.NEXT_PUBLIC_CHAT_APP_ID}
-          authKey={process.env.NEXT_PUBLIC_CHAT_AUTH_KEY}
-          userId={customer.id}
-          userName={`${customer.first_name} ${customer.last_name}`}
-          showOnlineUsersTab={false}
-          splitView={true}
-          quickActions={quickActions}
-          defaultChat={{
-            id: store.id,
-            opponentUserId: 13301995,
-            type: "1on1",
-            name: store.name
-          }}
-        />
+      <ConnectyCubeChatWidget
+        // credentials
+        appId={process.env.NEXT_PUBLIC_CHAT_APP_ID}
+        authKey={process.env.NEXT_PUBLIC_CHAT_AUTH_KEY}
+        userId={customer.id}
+        userName={`${customer.first_name} ${customer.last_name}`}
+        // settings
+        showOnlineUsersTab={false}
+        splitView={true}
+        // quick actions
+        quickActions={quickActions}
+        // notifications
+        showNotifications={true}
+        playSound={true}
+        // moderation
+        enableContentReporting={true}
+        enableBlockList={true}
+        // last seen
+        enableLastSeen={true}
+        // url preview
+        enableUrlPreview={true}
+        limitUrlsPreviews={1}
+        // attachments settings
+        attachmentsAccept={"image/*,video/*,.pdf,audio/*"}
+        // default chat
+        defaultChat={defaultChat}
+        onOpenChange={onOpenCloseWidget}
+      />
     </div>
-  );
+  )
 }
