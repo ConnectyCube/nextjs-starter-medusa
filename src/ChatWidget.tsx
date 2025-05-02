@@ -2,21 +2,19 @@
 
 import React, { useEffect, useState } from "react"
 import ConnectyCubeChatWidget from "@connectycube/chat-widget/react19"
-import { AdminStore, StoreCustomer } from "@medusajs/types"
+import { AdminStore, StoreCustomer, StoreProduct } from "@medusajs/types"
 
 export interface ChatWidgetProps {
-  productId: string
-  productName: string
   store: AdminStore
   customer: StoreCustomer | null
+  product: StoreProduct
   chatPerProduct?: boolean
 }
 
 export default function ChatWidget({
   store,
   customer,
-  productId,
-  productName,
+  product,
   chatPerProduct,
 }: ChatWidgetProps) {
   const quickActions = {
@@ -36,7 +34,7 @@ export default function ChatWidget({
   }
 
   const [defaultChat, setDefaultChat] = useState<any>(null)
-  const [isOpen, setIsOpen] = useState<any>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const onOpenCloseWidget = (isOpen: boolean) => {
     setIsOpen(isOpen)
@@ -45,8 +43,8 @@ export default function ChatWidget({
   useEffect(() => {
     if (isOpen) {
       console.log("Widget is open:", isOpen)
-      const defaultChatKey = chatPerProduct ? productId : store.id
-      const defaultChatName = chatPerProduct ? productName : store.name
+      const defaultChatKey = chatPerProduct ? product.id : store.id
+      const defaultChatName = chatPerProduct ? product.title : store.name
 
       setDefaultChat({
         id: defaultChatKey,

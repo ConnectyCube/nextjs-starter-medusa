@@ -70,10 +70,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         </Suspense>
       </div>
       <ChatWidget
-        productName={product.title}
-        productId={product.id}
         store={product.store}
         customer={customer}
+        product={product}
         chatPerProduct={true}
       />
     </>
